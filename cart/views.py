@@ -74,25 +74,30 @@ def remove_cart(request):
     
     
 def cart(request):
-    cart = Cart.objects.filter(is_paid = False, user = request.user)
-    cartitem = CartItem.objects.filter(cart__is_paid = False, cart__user = request.user)
-    tax = 0
-    subtotal = 0
-    grandtotal = 0
-    for item in cartitem:
-        subtotal+= item.get_product_subtotal()
-    tax= subtotal*0.18
-    grandtotal = subtotal+tax+70
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(is_paid = False, user = request.user)
+        cartitem = CartItem.objects.filter(cart__is_paid = False, cart__user = request.user)
+        tax = 0
+        subtotal = 0
+        grandtotal = 0
+        for item in cartitem:
+            subtotal+= item.get_product_subtotal()
+        tax= subtotal*0.18
+        grandtotal = subtotal+tax+70
+        
+        context = {
+            'cart' : cart,
+            'cartitem' : cartitem,  
+            'subtotal' : subtotal, 
+            'tax' : tax, 
+            'grandtotal' : grandtotal,
+        }
+        return render(request, 'cart/cart.html', context)
     
-    context = {
-        'cart' : cart,
-        'cartitem' : cartitem,  
-        'subtotal' : subtotal, 
-        'tax' : tax, 
-        'grandtotal' : grandtotal,
-    }
+    else:
+        return render(request, 'cart/cart.html')
+        
     
-    return render(request, 'cart/cart.html', context)
 
 from django.core.exceptions import ObjectDoesNotExist
 

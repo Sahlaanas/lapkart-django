@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,10 +22,10 @@ from django.contrib.messages import constants as messages
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^-*z-s)jp6efs&d4*@nckgtfkmw0+mur80p@ctw5=qqpds-47e'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config('DEBUG', default=True, cast=bool )
 
 ALLOWED_HOSTS = ['*']
 
@@ -99,11 +100,11 @@ WSGI_APPLICATION = 'lapkart.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'lapkart',
-        'USER' : 'postgres',
-        'PASSWORD' : 'achumol',
-        'HOST' : 'localhost',
-        'POST' : '5432',
+        'NAME': config('db_name'),
+        'USER' : config('db_user'),
+        'PASSWORD' : config('db_passwd'),
+        'HOST' : config('db_host'),
+        'POST' : config('db_port', cast=int),
     }
 }
 
@@ -145,11 +146,11 @@ USE_TZ = True
 
 #===================Sending Email===============
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'sahlavalillath@gmail.com'
-EMAIL_HOST_PASSWORD = 'whwvdtahfqmgbxmv'
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT',cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 
 
@@ -178,8 +179,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #===================RAZORPAY GATEWAY==========
 
-KEY = 'rzp_test_IAsoLLg94jUgWM'
-SECRET = 'l67awLFoLavydlJ3bM23cvtU'
+KEY = config('KEY')
+SECRET = config('SECRET')
 
 
 
