@@ -1,0 +1,369 @@
+{% extends 'user_home/base.html'%}
+{% load static %}
+{% block title %}
+Checkout
+{% endblock %}
+{% block headlink %}
+  <!-- nice select CSS -->
+  <link rel="stylesheet" href="{% static 'assetUser/css/nice-select.css' %}">
+ 
+  <link rel="stylesheet" href="{% static 'assetUser/css/price_rangs.css' %}">
+
+{% endblock %}
+{% block content %}
+{% include 'includes/navbar.html' %}
+
+
+  <!--================Home Banner Area =================-->
+  <!-- breadcrumb start-->
+  <section class="breadcrumb breadcrumb_bg">
+    <div class="container">
+      <div class="row ">
+        <div class="col-lg-8">
+          <div class="breadcrumb_iner">
+            <div class="breadcrumb_iner_item">
+              <h2>Product Checkout</h2>
+              <p>Home <span>-</span> Shop Single</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- breadcrumb start-->
+  {% if not carts %}
+  <h2 class="text-center mt-5"> Thank you, Your order has been successfully placed</h2>
+          <br>
+          <br>
+          <div class="text-center">
+              <a href="{% url 'store' %}" class="btn btn-primary">Continue Shopping</a>
+          </div>
+  {% else %}
+<style>
+  .cp {     
+    background-color: Transparent;
+    color:#d90d28;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;        
+}
+</style>
+
+  <!--================Checkout Area =================-->
+  <section class="checkout_area padding_top">
+    <div class="container">
+      
+      <div class="cupon_area">
+        <form method ="POST">
+          {% csrf_token%}
+        <div class="check_title">
+          <h2>
+            Don't Have a coupon?
+            <!-- Button trigger modal -->
+<button type="button" class=" cp" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  View Available Coupon
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+     {% if coupons %}
+      {% for coupon in coupons %}
+          <div class="modal-body">
+              <p>{{ coupon.coupon_code }}</p>
+          </div>
+      {% endfor %}
+      {% else %}
+      <div class="modal-body">
+        <p>No Coupons Available</p>
+    </div>
+    {% endif %}
+
+
+
+  
+ 
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+          </h2>
+        </div>
+        <input type="text" name="coupon_code" placeholder="Enter coupon code" />
+        <button class="tp_btn" type="submit" >Apply Coupon</button>
+    </form>
+      </div>
+      <div class="billing_details">
+    <form method="POST" action="{% url 'placeorder' %}">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-lg-8">
+            <h3>Billing Details</h3>
+            {% comment %} <form class="row contact_form" action="#" method="post" novalidate="novalidate"> {% endcomment %}
+              <div class="col-md-6 form-group p_star">
+                <input type="text" class="form-control" id="first" value={{request.user.first_name}} name="fname" />
+                
+              </div>
+              <div class="col-md-6 form-group p_star">
+                <input type="text" class="form-control" id="last" value={{request.user.last_name}} name="lname" />
+                
+              </div>
+              
+              <div class="col-md-6 form-group p_star">
+                <input type="text" class="form-control" id="number" {% if userprofile.contact_number %}value={{userprofile.contact_number}}{%else%}placeholder="Phone number" {%endif%} name="phone" />
+                
+              </div>
+              <div class="col-md-6 form-group p_star">
+                <input type="text" class="form-control" id="email" value={{request.user.email}} name="email" />
+                
+              </div>
+              <div class="col-md-6 form-group p_star">
+                <input type="text" class="form-control" id="email" {% if userprofile.district %}value={{userprofile.district}}{%else%}placeholder="District" {%endif%} name="district" />
+                
+              </div>
+              
+              <div class="col-md-6 form-group p_star">
+                <input type="text" class="form-control" id="email" {% if userprofile.address %}value={{userprofile.address}}{%else%}placeholder="Address" {%endif%} name="address" />
+                
+              </div>
+             
+              <div class="col-md-12 form-group p_star">
+                <input type="text" class="form-control" id="city" {% if userprofile.city %}value={{userprofile.city}}{%else%}placeholder="City" {%endif%} name="city" />
+                
+              </div>
+              <div class="col-md-12 form-group p_star">
+                <input type="text" class="form-control" id="state" {% if userprofile.state %}value={{userprofile.state}}{%else%}placeholder="State" {%endif%} name="state" />
+               
+              </div>
+              <div class="col-md-6 form-group p_star">
+                <input type="text" class="form-control" id="country" {% if userprofile.country %}value={{userprofile.country}}{%else%}placeholder="Country" {%endif%} name="country" />
+                
+              </div>
+              <div class="col-md-12 form-group">
+                <input type="text" class="form-control" id="zip" {% if userprofile.pincode %}value={{userprofile.pincode}}{%else%}placeholder="Pincode/ZIP" {%endif%} name="pincode"  />
+              </div>
+              
+              <div class="col-md-12 form-group">
+                <div class="creat_account">
+                  <h3>Additional Details</h3>
+                  <textarea class="form-control" name="message" id="message" rows="1"
+                  placeholder="Order Notes"></textarea>
+                </div>
+                
+              </div>
+            {% comment %} </form> {% endcomment %}
+          </div>
+          <div class="col-lg-4">
+            <div class="order_box">
+              <h2>Your Order</h2>
+              <ul class="list">
+                
+                <li>
+                  <a href="#">Product
+                    <span>Total</span>
+                  </a>
+                </li>
+                {% for item in cartitems%}
+                <li>
+                  <a href="#">{{item.product.product_name}}
+                    <span class="">x {{item.product_quantity}}</span>
+                    <span class="last">₹{{item.get_product_price}}</span>
+                  </a>
+                </li>
+                {% endfor %}
+                
+              </ul>
+              <ul class="list list_2">
+                <li>
+                  <a href="#">Subtotal
+                    <span>₹{{subtotal}}</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">Shipping
+                    <span>Flat rate: ₹ 50.00</span>
+                  </a>
+                </li>
+                <li>
+                    <a href="#">Tax
+                      <span>₹ {{tax}}</span>
+                    </a>
+                  </li>
+                  {% if coupon %}
+                  <li>
+                    <a href="#">Coupon Applied
+                      <span>₹ {{coupon.discount_price}}</span>
+                    </a>
+                  </li>
+                  {% endif %}
+                <li>
+                  <a href="#">Grand Total
+                    <span>₹ {{grandtotal}}</span>
+                  </a>
+                </li>
+              </ul>
+             
+
+                  <div class="checkout_input_radio">
+                    <label for="payment">
+                        <input type="radio" id="payment" name="payment_mode" value="cash_on_delivery" checked>
+                        COD       
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <div class="checkout_input_radio">
+                  <label for="payment">
+                      <input  type="radio" id="payment" name="payment_mode" value="Wallet">
+                      Wallet     
+                      <span class="checkmark"></span>
+                  </label>
+              </div>
+              
+              <span ><button type="button" style="width:13px;height:13px;background-color:#fff;border-radius:30px;border-width : 1px" </button></span><button type="button" style="width:100px;height:30px;background-color:#ecfdff;border-radius:30px;border-width : 0"  class=" payWithRazorpay  " sty href="#">Razorpay</button>
+   
+              <div class="mt-5">
+              
+              <button type="submit" class="btn_3 mt-2" href="#"> Place Your Order</button>
+              
+
+              </div>
+            </div>
+          </div>
+        </div>
+    </form>
+      </div>
+    </div>
+  </section>
+  <!--================End Checkout Area =================-->
+  {% include 'includes/footer.html' %}
+ {% endif %}
+{% endblock %}
+{% block bottomlink %}
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    $(document).ready(function () {
+
+      $('.payWithRazorpay').click(function (e) {
+        e.preventDefault();
+
+        var fname = $("[name='fname']").val()
+        var lname = $("[name='lname']").val()
+        var phone = $("[name='phone']").val()
+        var email = $("[name='email']").val()
+        var city = $("[name='city']").val()
+        var state = $("[name='state']").val()
+        var country = $("[name='country']").val()
+        var pincode = $("[name='pincode']").val()
+        var district = $("[name='district']").val()
+        var address = $("[name='address']").val()
+        var token = $("[name='csrfmiddlewaretoken']").val()
+
+        if(fname == "" || lname == "" || phone == "" || email == "" || city == "" || state == "" || country == "" || pincode == "" || district == "" || address == "")
+        {
+          swal("Alert!", "All fields are mandatory!", "error");
+          return false;
+
+        }
+        else
+        {
+
+          $.ajax({
+             method:"GET",
+             url:"/checkout/proceed-to-pay/",
+             success: function(response) {
+
+              var options = {
+                "key": "rzp_test_IAsoLLg94jUgWM", // Enter the Key ID generated from the Dashboard
+                "amount": 1*100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                "currency": "INR",
+                "name": "LapKart",
+                "description": "Thank you for buying with us",
+                "image": "https://example.com/your_logo",
+                //"order_id": "order_IluGWxBm9U8zJ8", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                "handler": function (responseb){
+                    data = {
+                      "fname" : fname,
+                      "lname" : lname,
+                      "phone" : phone,
+                      "email" : email,
+                      "city" : city,
+                      "state" : state,
+                      "country" : country,
+                      "pincode" : pincode,
+                      "district" : district,
+                      "address" : address,
+                      "payment_mode" : "Razorpay",
+                      "payment_id" : responseb.razorpay_payment_id,
+                      csrfmiddlewaretoken : token
+
+                    }
+                      $.ajax({
+                        method:"POST",
+                        url:"/checkout/place-order/",
+                        data: data,
+                        success: function (responsec) {
+                          console.log(responsec)
+                          swal("Congratulations!", responsec.status,"success").then((value) => {
+                              window.location.href = '/myorders/'
+                          });
+                        }
+
+                    });
+                },
+                "prefill": {
+                    "name": fname+" "+lname,
+                    "email": email,
+                    "contact": phone
+                },
+                
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.on('payment.failed', function (response){
+                    alert(response.error.code);
+                    alert(response.error.description);
+                    alert(response.error.source);
+                    alert(response.error.step);
+                    alert(response.error.reason);
+                    alert(response.error.metadata.order_id);
+                    alert(response.error.metadata.payment_id);
+            });
+            rzp1.open();
+              console.log(responsec);
+
+             }
+          });
+          
+   
+        }
+
+
+
+
+
+        
+      });
+
+    });
+    
+    </script>
+  <script src="{% static 'assetUser/js/jquery.nice-select.min.js' %}"></script>
+
+  <script src="{% static 'assetUser/js/stellar.js' %}"></script>
+  <script src="{% static 'assetUser/js/price_rangs.js' %}"></script>
+
+{% endblock %}
